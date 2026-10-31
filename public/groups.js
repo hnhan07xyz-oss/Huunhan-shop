@@ -79,3 +79,7 @@ window.pform = id => {
     if (await save("products", id ? S.products.map(x => x.id === id ? n : x) : [...S.products, n])) { m.remove(); A.products(); }
   };
 };
+save = async function (path, data) {
+  try { S[path] = await api(path, JB("PUT", data)); toast("Đã lưu"); head(); return true; }
+  catch (e) { toast(e.message); return false; }
+};
