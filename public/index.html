@@ -147,3 +147,37 @@ addEventListener("hashchange",render);
 load().then(render);
 </script></body></html>
 <script src="groups.js"></script>
+<script>
+(function () {
+  function addBox() {
+    if (document.querySelector(".hn-contact")) return;
+    var all = document.querySelectorAll("div,span,p,b,strong");
+    var label = null;
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].children.length === 0 && all[i].textContent.trim() === "Tổng tiền") {
+        label = all[i];
+        break;
+      }
+    }
+    if (!label) return;
+    var card = label.parentElement;
+    while (card && card !== document.body) {
+      var t = card.textContent;
+      if (t.indexOf("Hoàn tất") > -1 && t.indexOf("LỊCH SỬ") === -1) break;
+      card = card.parentElement;
+    }
+    if (!card || card === document.body) return;
+    var box = document.createElement("div");
+    box.className = "hn-contact";
+    box.style.cssText =
+      "margin-top:16px;padding:16px;border:1px solid rgba(34,211,238,.35);border-radius:14px;text-align:center;";
+    box.innerHTML =
+      '<p style="margin:0 0 12px;color:#cbd5e1;font-size:14px">Vui lòng liên hệ Admin để nhận file.</p>' +
+      '<a href="/lien-he" target="_blank" rel="noopener noreferrer" ' +
+      'style="display:inline-block;padding:10px 22px;border-radius:12px;background:#22d3ee;color:#000;font-weight:700;text-decoration:none">Nhấn vào đây</a>';
+    card.appendChild(box);
+  }
+  new MutationObserver(addBox).observe(document.body, { childList: true, subtree: true });
+  addBox();
+})();
+</script>
