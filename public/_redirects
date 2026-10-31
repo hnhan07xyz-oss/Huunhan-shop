@@ -1,5 +1,8 @@
 <script>
 (function () {
+  // Link liên hệ nhận file (đổi ở đây nếu cần)
+  var CONTACT_URL = "https://zalo.me/0357924374";
+
   var css = document.createElement("style");
   css.textContent =
     ".hn-contact{margin-top:16px;padding:20px 16px;text-align:center;border-radius:18px;position:relative;overflow:hidden;" +
@@ -33,15 +36,18 @@
       card = card.parentElement;
     }
     if (!card || card === document.body) return;
+
     var box = document.createElement("div");
     box.className = "hn-contact";
     box.innerHTML =
       '<div class="hn-ok">✓</div>' +
       '<p class="hn-t">MUA FILE THÀNH CÔNG</p>' +
       '<p class="hn-s">Vui lòng liên hệ Admin để nhận file<br>của bạn nhanh nhất.</p>' +
-      '<a class="hn-btn" href="/lien-he" target="_blank" rel="noopener noreferrer">💬 Nhấn vào đây</a>';
+      '<a class="hn-btn" target="_blank" rel="noopener noreferrer">💬 Nhấn vào đây</a>';
+    box.querySelector("a").href = CONTACT_URL;
     card.appendChild(box);
   }
+
   new MutationObserver(addBox).observe(document.body, { childList: true, subtree: true });
   addBox();
 })();
