@@ -83,3 +83,48 @@ save = async function (path, data) {
   try { S[path] = await api(path, JB("PUT", data)); toast("Đã lưu"); head(); return true; }
   catch (e) { toast(e.message); return false; }
 };
+document.head.insertAdjacentHTML("beforeend", `<style>
+.av,.logo{overflow:hidden}.av img,.logo img{width:100%;height:100%;object-fit:cover;display:block}
+[data-p]{overflow:hidden;border-radius:10px}[data-p] img{width:100%;height:100%;object-fit:cover;display:block}
+.row input[type=file]{width:auto;flex:1;min-width:0}
+</style>`);
+
+const ASPECT = { avatar: [1, 1, 1], logo: [1, 1], image: [1, 1], cover: [16, 6], banner: [16, 9] };
+
+function cropFile(file, key, done) {
+  const [a1, a2, circle] = ASPECT[key], url = URL.createObjectURL(file), im = new Image();
+  im.onerror = () => toast("Không đọc được ảnh này, thử ảnh khác (JPG/PNG)");
+  im.onload = () => {
+    const W = Math.min(300, innerWidth - 80), H = Math.round(W * a2 / a1), nw = im.naturalWidth, nh = im.naturalHeight, s0 = Math.max(W / nw, H / nh);
+    let z = 1, ox = 0, oy = 0;
+    const m = modal(`<h3>Căn chỉnh ảnh</h3><p class="mu" style="font-size:13px">Kéo ảnh để di chuyển, kéo thanh bên dưới để phóng to/thu nhỏ.</p>
+    <div id="cf" style="position:relative;width:${W}px;height:${H}px;margin:8px auto;overflow:hidden;background:#000;touch-action:none;border:2px solid var(--cy);border-radius:${circle ? "50%" : "12px"}"><img id="ci" src="${url}" alt="" style="position:absolute;max-width:none;pointer-events:none;user-select:none"></div>
+    <input id="cz" type="range" min="1" max="4" step="0.01" value="1"><div class="row"><button class="btn" id="cok">DÙNG ẢNH NÀY</button><button class="btn alt" id="cno">Hủy</button></div>`);
+    const fix = () => { const s = s0 * z, mx = Math.max(0, (nw * s - W) / 2), my = Math.max(0, (nh * s - H) / 2); ox = Math.min(mx, Math.max(-mx, ox)); oy = Math.min(my, Math.max(-my, oy)); return s; };
+    const draw = () => { const s = fix(), i = m.querySelector("#ci"); i.style.width = nw * s + "px"; i.style.height = nh * s + "px"; i.style.left = (W / 2 + ox - nw * s / 2) + "px"; i.style.top = (H / 2 + oy - nh * s / 2) + "px"; };
+    draw();
+    const cf = m.querySelector("#cf"); let px, py, down = false;
+    cf.onpointerdown = e => { down = true; px = e.clientX; py = e.clientY; cf.setPointerCapture(e.pointerId); };
+    cf.onpointermove = e => { if (!down) return; ox += e.clientX - px; oy += e.clientY - py; px = e.clientX; py = e.clientY; draw(); };
+    cf.onpointerup = cf.onpointercancel = () => { down = false; };
+    m.querySelector("#cz").oninput = e => { z = +e.target.value; draw(); };
+    m.querySelector("#cno").onclick = () => m.remove();
+    m.querySelector("#cok").onclick = () => {
+      const s = fix(), ow = a1 === a2 ? 800 : 1280, oh = Math.round(ow * H / W), c = document.createElement("canvas"); c.width = ow; c.height = oh;
+      const x = c.getContext("2d"); x.fillStyle = "#000"; x.fillRect(0, 0, ow, oh);
+      x.drawImage(im, (nw * s / 2 - W / 2 - ox) / s, (nh * s / 2 - H / 2 - oy) / s, W / s, H / s, 0, 0, ow, oh);
+      c.toBlob(async b => { try { m.remove(); done(await up(b)); } catch (e) { toast(e.message); } }, key === "logo" ? "image/png" : "image/jpeg", 0.92);
+    };
+  };
+  im.src = url;
+}
+
+bindImgs = function (root) {
+  root.querySelectorAll("[data-u]").forEach(i => i.onchange = () => {
+    const k = i.dataset.u, f = i.files[0]; if (!f) return;
+    const fin = u => { root.querySelector(`[data-k="${k}"]`).value = u; root.querySelector(`[data-p="${k}"]`).innerHTML = img(u); toast("Đã tải ảnh"); };
+    i.value = "";
+    if (!ASPECT[k]) up(f).then(fin, e => toast(e.message)); else cropFile(f, k, fin);
+  });
+  root.querySelectorAll("[data-x]").forEach(b => b.onclick = () => { const k = b.dataset.x; root.querySelector(`[data-k="${k}"]`).value = ""; root.querySelector(`[data-p="${k}"]`).innerHTML = img(""); });
+};
