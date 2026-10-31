@@ -2,8 +2,8 @@ import { getStore } from "@netlify/blobs";
 import crypto from "node:crypto";
 
 const J = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json" } });
-const db = () => getStore("hn-data");
-const imgs = () => getStore("hn-images");
+const db = () => getStore({ name: "hn-data", consistency: "strong" });
+const imgs = () => getStore({ name: "hn-images", consistency: "strong" });
 const DEF = {
   settings: {
     shopName: "HỮU NHÂN SHOP", slogan: "UY TÍN TẠO THƯƠNG HIỆU – CHẤT LƯỢNG TẠO NIỀM TIN",
