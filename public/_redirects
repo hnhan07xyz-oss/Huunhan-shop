@@ -1,0 +1,19 @@
+function PurchaseSuccess() {
+  return (
+    <div className="rounded-2xl border border-cyan-400/30 bg-[#0b1630] p-5 text-center">
+      <div className="text-3xl">✅</div>
+      <h3 className="mt-2 font-bold text-white">Mua file thành công!</h3>
+      <p className="mt-1 text-sm text-slate-300">
+        Vui lòng liên hệ Admin để nhận file.
+      </p>
+      <a
+        href="/lien-he"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 inline-block rounded-xl bg-cyan-400 px-5 py-2.5 font-bold text-black"
+      >
+        Nhấn vào đây
+      </a>
+    </div>
+  );
+}
