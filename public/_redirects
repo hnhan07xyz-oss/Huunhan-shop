@@ -1,1 +1,48 @@
-/lien-he  https://zalo.me/0357924374  302
+<script>
+(function () {
+  var css = document.createElement("style");
+  css.textContent =
+    ".hn-contact{margin-top:16px;padding:20px 16px;text-align:center;border-radius:18px;position:relative;overflow:hidden;" +
+    "background:linear-gradient(160deg,#0e1d3f,#0b1630);border:1px solid rgba(34,211,238,.45);box-shadow:0 0 22px rgba(34,211,238,.18),inset 0 0 30px rgba(37,99,235,.12);animation:hnIn .5s ease}" +
+    ".hn-contact:before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:120px;background:radial-gradient(circle,rgba(34,211,238,.28),transparent 70%);pointer-events:none}" +
+    ".hn-ok{width:54px;height:54px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#001018;position:relative;" +
+    "background:linear-gradient(135deg,#22d3ee,#4ade80);box-shadow:0 0 20px rgba(74,222,128,.55)}" +
+    ".hn-t{margin:0;font-size:16px;font-weight:800;letter-spacing:.5px;color:#e8f4ff;position:relative}" +
+    ".hn-s{margin:6px 0 16px;font-size:13px;line-height:1.5;color:#8aa0c0;position:relative}" +
+    ".hn-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:14px;font-weight:800;font-size:14px;text-decoration:none;position:relative;" +
+    "color:#00131f;background:linear-gradient(135deg,#22d3ee,#2563eb);box-shadow:0 6px 20px rgba(34,211,238,.4);transition:.2s}" +
+    ".hn-btn:hover,.hn-btn:active{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 26px rgba(34,211,238,.65)}" +
+    "@keyframes hnIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}";
+  document.head.appendChild(css);
+
+  function addBox() {
+    if (document.querySelector(".hn-contact")) return;
+    var all = document.querySelectorAll("div,span,p,b,strong");
+    var label = null;
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].children.length === 0 && all[i].textContent.trim() === "Tổng tiền") {
+        label = all[i];
+        break;
+      }
+    }
+    if (!label) return;
+    var card = label.parentElement;
+    while (card && card !== document.body) {
+      var t = card.textContent;
+      if (t.indexOf("Hoàn tất") > -1 && t.indexOf("LỊCH SỬ") === -1) break;
+      card = card.parentElement;
+    }
+    if (!card || card === document.body) return;
+    var box = document.createElement("div");
+    box.className = "hn-contact";
+    box.innerHTML =
+      '<div class="hn-ok">✓</div>' +
+      '<p class="hn-t">MUA FILE THÀNH CÔNG</p>' +
+      '<p class="hn-s">Vui lòng liên hệ Admin để nhận file<br>của bạn nhanh nhất.</p>' +
+      '<a class="hn-btn" href="/lien-he" target="_blank" rel="noopener noreferrer">💬 Nhấn vào đây</a>';
+    card.appendChild(box);
+  }
+  new MutationObserver(addBox).observe(document.body, { childList: true, subtree: true });
+  addBox();
+})();
+</script>
