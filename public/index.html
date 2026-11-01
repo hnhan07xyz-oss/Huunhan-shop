@@ -200,3 +200,72 @@ load().then(render);
   addBox();
 })();
 </script>
+<script>
+(function () {
+  var css = document.createElement("style");
+  css.textContent =
+    ".hn-warn{margin:14px 0;padding:14px;border-radius:14px;text-align:left;font-size:13px;line-height:1.55;color:#fde68a;" +
+    "background:linear-gradient(160deg,rgba(250,204,21,.12),rgba(239,68,68,.08));border:1px solid rgba(250,204,21,.5)}" +
+    ".hn-warn b{display:block;margin-bottom:4px;color:#facc15;letter-spacing:.5px}" +
+    ".hn-warn em{color:#fca5a5;font-style:normal;font-weight:700}" +
+    ".hn-err{display:none;margin-top:6px;font-size:12px;font-weight:600;color:#f87171}" +
+    ".hn-bad{border-color:#f87171!important}";
+  document.head.appendChild(css);
+
+  function setup() {
+    var go = document.getElementById("bgo");
+    if (!go || go.dataset.hn) return;
+    var modal = go.closest(".modal") || document.body;
+
+    var phone = null;
+    modal.querySelectorAll("label").forEach(function (l) {
+      if (/điện thoại|zalo/i.test(l.textContent)) {
+        var n = l.nextElementSibling;
+        if (n && n.tagName === "INPUT") phone = n;
+      }
+    });
+    if (!phone) phone = modal.querySelectorAll("input")[1];
+    if (!phone) return;
+    go.dataset.hn = "1";
+
+    phone.setAttribute("inputmode", "numeric");
+    phone.setAttribute("maxlength", "10");
+    phone.setAttribute("placeholder", "0xxxxxxxxx (đủ 10 số)");
+    phone.addEventListener("input", function () {
+      phone.value = phone.value.replace(/\D/g, "").slice(0, 10);
+      phone.classList.remove("hn-bad");
+      err.style.display = "none";
+    });
+
+    phone.insertAdjacentHTML("afterend", '<div class="hn-err"></div>');
+    var err = phone.nextElementSibling;
+
+    go.insertAdjacentHTML(
+      "beforebegin",
+      '<div class="hn-warn"><b>⚠️ LƯU Ý QUAN TRỌNG</b>' +
+        "Vui lòng nhập <b style=\"display:inline;color:#fde68a\">đúng thông tin</b> để được nhận file. " +
+        "Số điện thoại phải đủ <b style=\"display:inline;color:#fde68a\">10 số</b> dạng 0xxxxxxxxx, nhập 9 số sẽ không được nhận.<br>" +
+        "<em>Nếu nhập sai thông tin, tiền sẽ bị giam và không được hoàn lại.</em></div>"
+    );
+
+    modal.addEventListener(
+      "click",
+      function (e) {
+        if (!e.target.closest("#bgo")) return;
+        if (!/^0\d{9}$/.test(phone.value.trim())) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          err.textContent = "Số điện thoại phải đủ 10 số, bắt đầu bằng 0 (vd: 0357924374).";
+          err.style.display = "block";
+          phone.classList.add("hn-bad");
+          phone.focus();
+        }
+      },
+      true
+    );
+  }
+
+  new MutationObserver(setup).observe(document.body, { childList: true, subtree: true });
+  setup();
+})();
+</script>
