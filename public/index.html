@@ -269,3 +269,44 @@ load().then(render);
   setup();
 })();
 </script>
+<script>
+(function () {
+  var css = document.createElement("style");
+  css.textContent =
+    ".modal{align-items:center!important;padding:16px;background:rgba(2,6,16,.8)!important;" +
+    "backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:hnFade .25s ease}" +
+    ".modal>div{position:relative;max-width:440px!important;max-height:86vh!important;border-radius:20px!important;" +
+    "border:1px solid rgba(34,211,238,.5)!important;box-shadow:0 0 40px rgba(34,211,238,.25),0 20px 60px rgba(0,0,0,.6);" +
+    "animation:hnZoom .25s ease}" +
+    ".modal>div>h3:first-of-type{padding-right:40px}" +
+    ".hn-mx{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;" +
+    "border:1px solid rgba(34,211,238,.5);background:#0b1630;color:#e8f4ff;font-size:16px;font-weight:800;line-height:1;cursor:pointer}" +
+    ".hn-mx:active{transform:scale(.92)}" +
+    "@keyframes hnFade{from{opacity:0}to{opacity:1}}" +
+    "@keyframes hnZoom{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}";
+  document.head.appendChild(css);
+
+  function addX() {
+    document.querySelectorAll(".modal").forEach(function (m) {
+      var box = m.firstElementChild;
+      if (!box || box.querySelector(".hn-mx")) return;
+      var x = document.createElement("button");
+      x.type = "button";
+      x.className = "hn-mx";
+      x.setAttribute("aria-label", "Đóng");
+      x.textContent = "✕";
+      x.onclick = function (e) {
+        e.stopPropagation();
+        m.remove();
+      };
+      box.insertBefore(x, box.firstChild);
+      m.addEventListener("click", function (e) {
+        if (e.target === m) m.remove();
+      });
+    });
+  }
+
+  new MutationObserver(addX).observe(document.body, { childList: true, subtree: true });
+  addX();
+})();
+</script>
